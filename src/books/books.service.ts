@@ -10,17 +10,17 @@ export class BooksService {
   constructor(
     @InjectRepository(Book) private readonly bookRepository: Repository<Book>, // to inject an instance of repository of Book to the BookService
   ) {}
-  async create(createBookInput: CreateBookInput) {
+  create(createBookInput: CreateBookInput) {
     const book = this.bookRepository.create(createBookInput);
-    return await this.bookRepository.save(book);
+    return this.bookRepository.save(book);
   }
 
-  async findAll() {
-    return await this.bookRepository.find();
+  findAll() {
+    return this.bookRepository.find();
   }
 
-  async findOne(id: number) {
-    return await this.bookRepository.findOneBy({ id });
+  findOne(id: number) {
+    return this.bookRepository.findOneBy({ id });
   }
 
   async update(id: number, updateBookInput: UpdateBookInput) {

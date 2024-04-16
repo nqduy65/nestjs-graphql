@@ -5,6 +5,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { BooksModule } from './books/books.module';
+import { AuthorsModule } from './authors/authors.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { BooksModule } from './books/books.module';
       inject: [ConfigService],
     }),
     BooksModule,
+    AuthorsModule,
   ],
   controllers: [],
   providers: [],
