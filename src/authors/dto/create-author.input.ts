@@ -1,6 +1,5 @@
 import { InputType, Field, Int } from '@nestjs/graphql';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
-import { Book } from 'src/books/entities/book.entity';
+import { IsNumber, IsString } from 'class-validator';
 
 @InputType()
 export class CreateAuthorInput {
@@ -12,7 +11,6 @@ export class CreateAuthorInput {
   @Field(() => Int)
   bornYear: number;
 
-  @Field(() => [Book], { nullable: true })
-  @IsOptional()
-  books?: Book[];
+  @Field(() => [Int], { nullable: true })
+  bookIds?: number[];
 }

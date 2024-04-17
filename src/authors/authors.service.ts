@@ -15,24 +15,35 @@ export class AuthorsService {
   ) {}
 
   async create(createAuthorInput: CreateAuthorInput) {
-    if (createAuthorInput.books) {
-      const existBookCheck = createAuthorInput.books.every(async (book) => {
-        await this.bookRepository.findOneBy({ id: book.id });
-      });
-      if (!existBookCheck) {
+    const author = this.authorRepository.create(createAuthorInput);
+    if (createAuthorInput.bookIds) {
+      author.books = await Promise.all(
+        createAuthorInput.bookIds.map((id) =>
+          this.bookRepository.findOneBy({ id }),
+        ),
+      );
+      const booksExist = author.books.every((el) => el !== null);
+      if (!booksExist) {
         throw new NotFoundException();
       }
     }
-    const author = this.authorRepository.create(createAuthorInput);
-    return await this.authorRepository.save(author);
+    const res = await this.authorRepository.save(author);
+    return res;
   }
 
   findAll() {
-    return this.authorRepository.find();
+    return this.authorRepository.find({
+      relations: {
+        books: true,
+      },
+    });
   }
 
   findOne(id: number) {
-    return this.authorRepository.findOneBy({ id });
+    return this.authorRepository.findOne({
+      where: { id },
+      relations: { books: true },
+    });
   }
 
   async update(id: number, updateAuthorInput: UpdateAuthorInput) {

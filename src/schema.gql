@@ -46,24 +46,24 @@ type Mutation {
 
 input CreateBookInput {
   bookName: String!
-  authors: [AuthorInput!]
+  authorIds: [Int!]
 }
 
 input UpdateBookInput {
   bookName: String
-  authors: [AuthorInput!]
+  authorIds: [Int!]
   id: Int!
 }
 
 input CreateAuthorInput {
   authorName: String!
   bornYear: Int!
-  books: [BookInput!]
+  bookIds: [Int!]
 }
 
 input UpdateAuthorInput {
   authorName: String
   bornYear: Int
-  books: [BookInput!]
+  bookIds: [Int!]
   id: Int!
 }
