@@ -5,6 +5,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { BooksModule } from './books/books.module';
+import { AuthorsModule } from './authors/authors.module';
 
 @Module({
   imports: [
@@ -24,17 +25,29 @@ import { BooksModule } from './books/books.module';
         synchronize: true,
       }),
     }),
-    //using forRootAsync to async function in factory and using dependency injecttion <inject: [ConfigService]>
+
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
-      driver: ApolloDriver, // default driver for GraphQL module
-      imports: [ConfigModule], //import ConfigModle to get variables in .env
-      useFactory: async (configService: ConfigService) => ({
-        autoSchemaFile: configService.get<string>('GRAPHQL_SCHEMA_FILE'), //auto generate .gql file from Decorators in models ObjectType and Resolver
-        // typePaths: configService.get<string[]>('GRAPHQL_TYPE_PATHS'), //when we need to apply schema first
-      }),
+      driver: ApolloDriver,
+      imports: [ConfigModule],
       inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        autoSchemaFile: configService.get<string>('GRAPHQL_SCHEMA_FILE'),
+        formatError(error) {
+          const originalError = error.extensions?.originalError;
+          if (originalError)
+            return {
+              message: originalError['message'],
+              statusCode: originalError['statusCode'],
+            };
+          return {
+            message: error.message,
+            statusCode: error.extensions?.code || 'BAD_REQUEST',
+          };
+        },
+      }),
     }),
     BooksModule,
+    AuthorsModule,
   ],
   controllers: [],
   providers: [],
