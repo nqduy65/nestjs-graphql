@@ -16,11 +16,11 @@ export class Author {
   @Field(() => Int)
   id: number;
 
-  @Column({ type: 'character varying' })
+  @Column({ type: 'character varying', name: 'author_name' })
   @Field()
   authorName: string;
 
-  @Column({ type: 'int4' })
+  @Column({ type: 'int4', name: 'born_year' })
   @Field(() => Int)
   bornYear: number;
 

@@ -10,7 +10,7 @@ export class Book {
   @Field(() => Int)
   id: number;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', name: 'book_name' })
   @Field()
   bookName: string;
 

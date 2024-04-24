@@ -3,6 +3,7 @@ import { BooksService } from './books.service';
 import { Book } from './entities/book.entity';
 import { CreateBookInput } from './dto/create-book.input';
 import { UpdateBookInput } from './dto/update-book.input';
+import { NotFoundException } from '@nestjs/common';
 
 @Resolver(() => Book)
 export class BooksResolver {
@@ -19,17 +20,30 @@ export class BooksResolver {
   }
 
   @Query(() => Book, { name: 'book' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.booksService.findOne(id);
+  async findOne(@Args('id', { type: () => Int }) id: number) {
+    const book = await this.booksService.findOne(id);
+    if (!book) {
+      throw new NotFoundException(`Can not find the book with id ${id}`);
+    }
+    return book;
   }
 
   @Mutation(() => Book)
-  updateBook(@Args('updateBookInput') updateBookInput: UpdateBookInput) {
+  async updateBook(@Args('updateBookInput') updateBookInput: UpdateBookInput) {
+    if (!(await this.booksService.findOne(updateBookInput.id))) {
+      throw new NotFoundException(
+        `Can not find the book with id ${updateBookInput.id}`,
+      );
+    }
     return this.booksService.update(updateBookInput.id, updateBookInput);
   }
 
   @Mutation(() => Book)
-  removeBook(@Args('id', { type: () => Int }) id: number) {
-    return this.booksService.remove(id);
+  async removeBook(@Args('id', { type: () => Int }) id: number) {
+    const book = await this.findOne(id);
+    if (!book) {
+      throw new NotFoundException(`Can not find the book with id ${id}`);
+    }
+    return this.booksService.remove(book);
   }
 }

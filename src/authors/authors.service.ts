@@ -24,7 +24,7 @@ export class AuthorsService {
       );
       const booksExist = author.books.every((el) => el !== null);
       if (!booksExist) {
-        throw new NotFoundException();
+        throw new NotFoundException(`Books do not exist.`);
       }
     }
     const res = await this.authorRepository.save(author);
@@ -51,15 +51,24 @@ export class AuthorsService {
     if (!author) {
       throw new NotFoundException();
     }
+    if (updateAuthorInput.bookIds) {
+      author.books = await Promise.all(
+        updateAuthorInput.bookIds.map((id) =>
+          this.bookRepository.findOneBy({ id }),
+        ),
+      );
+      const booksExist = author.books.every((el) => el !== null);
+      if (!booksExist) {
+        throw new NotFoundException(`Books do not exist.`);
+      }
+    }
     Object.assign(author, updateAuthorInput);
     return await this.authorRepository.save(author);
   }
 
-  async remove(id: number) {
-    const author = await this.findOne(id);
-    if (!author) {
-      throw new NotFoundException();
-    }
-    return await this.authorRepository.remove(author);
+  async remove(author: Author) {
+    const resAuthor = { ...author };
+    await this.authorRepository.remove(author);
+    return resAuthor;
   }
 }

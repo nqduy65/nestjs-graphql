@@ -3,6 +3,7 @@ import { AuthorsService } from './authors.service';
 import { Author } from './entities/author.entity';
 import { CreateAuthorInput } from './dto/create-author.input';
 import { UpdateAuthorInput } from './dto/update-author.input';
+import { NotFoundException } from '@nestjs/common';
 
 @Resolver(() => Author)
 export class AuthorsResolver {
@@ -21,19 +22,32 @@ export class AuthorsResolver {
   }
 
   @Query(() => Author, { name: 'author' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.authorsService.findOne(id);
+  async findOne(@Args('id', { type: () => Int }) id: number) {
+    const author = await this.authorsService.findOne(id);
+    if (!author) {
+      throw new NotFoundException(`Can not find the author with id ${id}`);
+    }
+    return author;
   }
 
   @Mutation(() => Author)
-  updateAuthor(
+  async updateAuthor(
     @Args('updateAuthorInput') updateAuthorInput: UpdateAuthorInput,
   ) {
+    if (!(await this.authorsService.findOne(updateAuthorInput.id))) {
+      throw new NotFoundException(
+        `Can not find the author with id ${updateAuthorInput.id}`,
+      );
+    }
     return this.authorsService.update(updateAuthorInput.id, updateAuthorInput);
   }
 
   @Mutation(() => Author)
-  removeAuthor(@Args('id', { type: () => Int }) id: number) {
-    return this.authorsService.remove(id);
+  async removeAuthor(@Args('id', { type: () => Int }) id: number) {
+    const author = await this.findOne(id);
+    if (!author) {
+      throw new NotFoundException(`Can not find the author with id ${id}`);
+    }
+    return this.authorsService.remove(author);
   }
 }

@@ -23,7 +23,7 @@ export class BooksService {
       );
       const booksExist = book.authors.every((el) => el !== null);
       if (!booksExist) {
-        throw new NotFoundException();
+        throw new NotFoundException(`Authors do not exist.`);
       }
     }
     const res = await this.bookRepository.save(book);
@@ -38,27 +38,34 @@ export class BooksService {
     });
   }
 
-  findOne(id: number) {
-    return this.bookRepository.findOne({
+  async findOne(id: number) {
+    const book = await this.bookRepository.findOne({
       where: { id },
       relations: { authors: true },
     });
+    return book;
   }
 
   async update(id: number, updateBookInput: UpdateBookInput) {
-    const book = await this.bookRepository.findOneBy({ id });
-    if (!book) {
-      throw new NotFoundException();
+    const book = await this.findOne(id);
+    if (updateBookInput.authorIds) {
+      book.authors = await Promise.all(
+        updateBookInput.authorIds.map((id) =>
+          this.authorRepository.findOneBy({ id }),
+        ),
+      );
+      const booksExist = book.authors.every((el) => el !== null);
+      if (!booksExist) {
+        throw new NotFoundException(`Authors do not exist`);
+      }
     }
     Object.assign(book, updateBookInput);
     return await this.bookRepository.save(book);
   }
 
-  async remove(id: number) {
-    const book = await this.bookRepository.findOneBy({ id });
-    if (!book) {
-      throw new NotFoundException();
-    }
-    return await this.bookRepository.remove(book);
+  async remove(book: Book) {
+    const resBook = { ...book };
+    await this.bookRepository.remove(book);
+    return resBook;
   }
 }
