@@ -2,68 +2,43 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Author {
-  id: Int!
-  authorName: String!
-  bornYear: Int!
-  books: [Book!]
-}
-
 type Book {
   id: Int!
   bookName: String!
-  authors: [Author!]
-}
-
-input AuthorInput {
-  id: Int!
-  authorName: String!
-  bornYear: Int!
-  books: [BookInput!]
-}
-
-input BookInput {
-  id: Int!
-  bookName: String!
-  authors: [AuthorInput!]
+  publishBy: String!
+  publishYear: Int!
+  author: String!
 }
 
 type Query {
-  books: [Book!]!
-  book(id: Int!): Book!
-  authors: [Author!]!
-  author(id: Int!): Author!
+  findAllBooks(query: SearchBookDto): [Book!]!
+  findBookByName(bookName: String!): [Book!]!
+}
+
+input SearchBookDto {
+  bookName: String
+  publishBy: String
+  publishYear: Int
+  author: String
+  limit: Int
 }
 
 type Mutation {
   createBook(createBookInput: CreateBookInput!): Book!
-  updateBook(updateBookInput: UpdateBookInput!): Book!
+  updateBook(id: Int!, updateBookInput: UpdateBookInput!): Book!
   removeBook(id: Int!): Book!
-  createAuthor(createAuthorInput: CreateAuthorInput!): Author!
-  updateAuthor(updateAuthorInput: UpdateAuthorInput!): Author!
-  removeAuthor(id: Int!): Author!
 }
 
 input CreateBookInput {
   bookName: String!
-  authorIds: [Int!]
+  publishBy: String!
+  publishYear: Int!
+  author: String!
 }
 
 input UpdateBookInput {
   bookName: String
-  authorIds: [Int!]
-  id: Int!
-}
-
-input CreateAuthorInput {
-  authorName: String!
-  bornYear: Int!
-  bookIds: [Int!]
-}
-
-input UpdateAuthorInput {
-  authorName: String
-  bornYear: Int
-  bookIds: [Int!]
-  id: Int!
+  publishBy: String
+  publishYear: Int
+  author: String
 }

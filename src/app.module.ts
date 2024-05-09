@@ -5,7 +5,6 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { BooksModule } from './books/books.module';
-import { AuthorsModule } from './authors/authors.module';
 
 @Module({
   imports: [
@@ -37,17 +36,23 @@ import { AuthorsModule } from './authors/authors.module';
           if (originalError)
             return {
               message: originalError['message'],
-              statusCode: originalError['statusCode'],
+              code: originalError['error'],
+              status: originalError['statusCode'],
             };
           return {
             message: error.message,
-            statusCode: error.extensions?.code || 'BAD_REQUEST',
+            code: error.extensions?.status || 400,
+            status:
+              error.extensions?.code !== 'GRAPHQL_VALIDATION_FAILED'
+                ? error.extensions?.code !== 'INTERNAL_SERVER_ERROR'
+                  ? error.extensions?.code
+                  : 'BAD_REQUEST'
+                : 'BAD_REQUEST',
           };
         },
       }),
     }),
     BooksModule,
-    AuthorsModule,
   ],
   controllers: [],
   providers: [],

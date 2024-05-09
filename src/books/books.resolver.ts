@@ -3,7 +3,7 @@ import { BooksService } from './books.service';
 import { Book } from './entities/book.entity';
 import { CreateBookInput } from './dto/create-book.input';
 import { UpdateBookInput } from './dto/update-book.input';
-import { NotFoundException } from '@nestjs/common';
+import { SearchBookDto } from './dto/search-book.dto';
 
 @Resolver(() => Book)
 export class BooksResolver {
@@ -14,36 +14,32 @@ export class BooksResolver {
     return this.booksService.create(createBookInput);
   }
 
-  @Query(() => [Book], { name: 'books' })
-  findAll() {
-    return this.booksService.findAll();
+  @Query(() => [Book], { name: 'findAllBooks' })
+  async findAllBooks(
+    @Args('query', { nullable: true }) searchBookDto?: SearchBookDto,
+  ) {
+    const books = await this.booksService.findAll(searchBookDto);
+    return books;
   }
 
-  @Query(() => Book, { name: 'book' })
-  async findOne(@Args('id', { type: () => Int }) id: number) {
-    const book = await this.booksService.findOne(id);
-    if (!book) {
-      throw new NotFoundException(`Can not find the book with id ${id}`);
-    }
+  @Query(() => [Book], { name: 'findBookByName' })
+  async findOneBookByName(
+    @Args('bookName', { type: () => String }) bookName: string,
+  ) {
+    const book = await this.booksService.findOneByBookName(bookName);
     return book;
   }
 
   @Mutation(() => Book)
-  async updateBook(@Args('updateBookInput') updateBookInput: UpdateBookInput) {
-    if (!(await this.booksService.findOne(updateBookInput.id))) {
-      throw new NotFoundException(
-        `Can not find the book with id ${updateBookInput.id}`,
-      );
-    }
-    return this.booksService.update(updateBookInput.id, updateBookInput);
+  async updateBook(
+    @Args('id', { type: () => Int }) id: number,
+    @Args('updateBookInput') updateBookInput: UpdateBookInput,
+  ) {
+    return this.booksService.update(id, updateBookInput);
   }
 
   @Mutation(() => Book)
   async removeBook(@Args('id', { type: () => Int }) id: number) {
-    const book = await this.findOne(id);
-    if (!book) {
-      throw new NotFoundException(`Can not find the book with id ${id}`);
-    }
-    return this.booksService.remove(book);
+    return this.booksService.remove(id);
   }
 }

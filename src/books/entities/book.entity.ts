@@ -1,10 +1,8 @@
-import { ObjectType, Field, Int, InputType } from '@nestjs/graphql';
-import { Author } from 'src/authors/entities/author.entity';
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'books' })
 @ObjectType('Book')
-@InputType('BookInput')
 export class Book {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
@@ -14,7 +12,15 @@ export class Book {
   @Field()
   bookName: string;
 
-  @ManyToMany(() => Author, (author) => author.books)
-  @Field(() => [Author], { nullable: true })
-  authors: Author[];
+  @Column({ type: 'text', name: 'publish_by' })
+  @Field()
+  publishBy: string;
+
+  @Column({ type: 'text', name: 'publish_year' })
+  @Field(() => Int)
+  publishYear: number;
+
+  @Column({ type: 'text', name: 'author' })
+  @Field()
+  author: string;
 }
