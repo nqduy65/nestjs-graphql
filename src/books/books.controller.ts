@@ -6,11 +6,13 @@ import {
   BookServiceController,
   BookServiceControllerMethods,
 } from '@/src/proto/book';
+import { GrpcMethod } from '@nestjs/microservices';
 
 @Controller('book')
 @BookServiceControllerMethods()
 export class BookController implements BookServiceController {
-  findOne(): Book {
+  @GrpcMethod('BookService', 'FindOne')
+  findOne(data: FindBookByIdDto): Book {
     return {
       id: 1,
       bookName: 'abcd',

@@ -25,8 +25,7 @@ export class BooksService {
       );
     }
     try {
-      const book = this.bookRepository.create(createBookInput);
-      const res = await this.bookRepository.save(book);
+      const res = await this.bookRepository.save(createBookInput);
       return res;
     } catch (error) {
       throw new BadRequestException();
