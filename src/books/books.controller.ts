@@ -16,7 +16,7 @@ import { BookService } from './books.service';
 export class BookController implements BookServiceController {
   constructor(private readonly bookService: BookService) {}
 
-  @GrpcMethod('BookService', 'FindOne')
+  @GrpcMethod('BookService', 'CreateBook')
   create(createBookDto: CreateBookDto) {
     return this.bookService.create(createBookDto);
   }
@@ -27,18 +27,18 @@ export class BookController implements BookServiceController {
       id: 2,
       bookName: 'abcd',
       publishBy: 'duy',
-      publishYear: '100',
+      publishYear: 1998,
       author: 'test',
     };
   }
 
-  @GrpcMethod('BookService', 'FindOne')
+  @GrpcMethod('BookService', 'FindAll')
   findAll(searchBookDto?: FindBookDto): Book {
     return {
       id: 3,
       bookName: 'abcd',
       publishBy: 'duy',
-      publishYear: '100',
+      publishYear: 1998,
       author: 'test',
     };
   }

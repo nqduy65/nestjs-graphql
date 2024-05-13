@@ -17,7 +17,7 @@ export interface FindBookByIdDto {
 export interface FindBookDto {
   bookName?: string | undefined;
   publishBy?: string | undefined;
-  publishYear?: string | undefined;
+  publishYear?: number | undefined;
   author?: string | undefined;
   limit?: number | undefined;
 }
@@ -25,7 +25,7 @@ export interface FindBookDto {
 export interface CreateBookDto {
   bookName: string;
   publishBy: string;
-  publishYear: string;
+  publishYear: number;
   author: string;
 }
 
@@ -41,14 +41,14 @@ export interface Book {
   id: number;
   bookName: string;
   publishBy: string;
-  publishYear: string;
+  publishYear: number;
   author: string;
 }
 
 export const BOOK_PACKAGE_NAME = "book";
 
 export interface BookServiceClient {
-  create(request: FindBookDto): Observable<Book>;
+  create(request: CreateBookDto): Observable<Book>;
 
   findOneById(request: FindBookByIdDto): Observable<Book>;
 
@@ -56,7 +56,7 @@ export interface BookServiceClient {
 }
 
 export interface BookServiceController {
-  create(request: FindBookDto): Promise<Book> | Observable<Book> | Book;
+  create(request: CreateBookDto): Promise<Book> | Observable<Book> | Book;
 
   findOneById(request: FindBookByIdDto): Promise<Book> | Observable<Book> | Book;
 
