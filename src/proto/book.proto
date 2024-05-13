@@ -4,11 +4,38 @@ syntax = "proto3";
 package book;
 
 service BookService {
-  rpc FindOne (FindBookByIdDto) returns (Book) {}
+  rpc Create (FindBookDto) returns (Book) {}
+  rpc FindOneById (FindBookByIdDto) returns (Book) {}
+  rpc FindAll (FindBookDto) returns (Book) {}
+
 }
 
 message FindBookByIdDto {
   int32 id = 1;
+}
+
+
+message FindBookDto {
+  optional string bookName = 1;
+  optional string publishBy = 2;
+  optional string publishYear = 3;
+  optional string author = 4;
+  optional int32 limit = 5;
+}
+
+message CreateBookDto{
+  string bookName = 1;
+  string publishBy = 2;
+  string publishYear = 3;
+  string author = 4;
+}
+
+message UpdateBookDto{
+  int32 id = 1;
+  optional string bookName = 2;
+  optional string publishBy = 3;
+  optional int32 publishYear = 4;
+  optional string author = 5;
 }
 
 message Book {
