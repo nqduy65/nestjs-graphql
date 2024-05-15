@@ -37,6 +37,14 @@ export interface UpdateBookDto {
   author?: string | undefined;
 }
 
+export interface BookListResponse {
+  bookList: Book[];
+}
+
+export interface BookResponse {
+  book: Book | undefined;
+}
+
 export interface Book {
   id: number;
   bookName: string;
@@ -52,7 +60,11 @@ export interface BookServiceClient {
 
   findOneById(request: FindBookByIdDto): Observable<Book>;
 
-  findAll(request: FindBookDto): Observable<Book>;
+  update(request: UpdateBookDto): Observable<Book>;
+
+  remove(request: FindBookByIdDto): Observable<Book>;
+
+  findAll(request: FindBookDto): Observable<BookListResponse>;
 }
 
 export interface BookServiceController {
@@ -60,12 +72,16 @@ export interface BookServiceController {
 
   findOneById(request: FindBookByIdDto): Promise<Book> | Observable<Book> | Book;
 
-  findAll(request: FindBookDto): Promise<Book> | Observable<Book> | Book;
+  update(request: UpdateBookDto): Promise<Book> | Observable<Book> | Book;
+
+  remove(request: FindBookByIdDto): Promise<Book> | Observable<Book> | Book;
+
+  findAll(request: FindBookDto): Promise<BookListResponse> | Observable<BookListResponse> | BookListResponse;
 }
 
 export function BookServiceControllerMethods() {
   return function (constructor: Function) {
-    const grpcMethods: string[] = ["create", "findOneById", "findAll"];
+    const grpcMethods: string[] = ["create", "findOneById", "update", "remove", "findAll"];
     for (const method of grpcMethods) {
       const descriptor: any = Reflect.getOwnPropertyDescriptor(constructor.prototype, method);
       GrpcMethod("BookService", method)(constructor.prototype[method], method, descriptor);

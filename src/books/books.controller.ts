@@ -2,11 +2,11 @@ import { Controller } from '@nestjs/common';
 
 import {
   FindBookByIdDto,
-  Book,
   BookServiceController,
   BookServiceControllerMethods,
   CreateBookDto,
   FindBookDto,
+  UpdateBookDto,
 } from '@/src/proto/book';
 import { GrpcMethod } from '@nestjs/microservices';
 import { BookService } from './books.service';
@@ -16,30 +16,29 @@ import { BookService } from './books.service';
 export class BookController implements BookServiceController {
   constructor(private readonly bookService: BookService) {}
 
-  @GrpcMethod('BookService', 'CreateBook')
+  @GrpcMethod('BookService', 'Create')
   create(createBookDto: CreateBookDto) {
     return this.bookService.create(createBookDto);
   }
 
-  @GrpcMethod('BookService', 'FindOne')
-  findOneById(data: FindBookByIdDto): Book {
-    return {
-      id: 2,
-      bookName: 'abcd',
-      publishBy: 'duy',
-      publishYear: 1998,
-      author: 'test',
-    };
+  @GrpcMethod('BookService', 'FindOneById')
+  findOneById(data: FindBookByIdDto) {
+    return this.bookService.findOneById(data.id);
   }
 
   @GrpcMethod('BookService', 'FindAll')
-  findAll(searchBookDto?: FindBookDto): Book {
-    return {
-      id: 3,
-      bookName: 'abcd',
-      publishBy: 'duy',
-      publishYear: 1998,
-      author: 'test',
-    };
+  findAll(searchBookDto?: FindBookDto) {
+    return this.bookService.findAll(searchBookDto);
+    // return this.bookService.findAll();
+  }
+
+  @GrpcMethod('BookService', 'Update')
+  update(updateBookDto: UpdateBookDto) {
+    return this.bookService.update(updateBookDto.id, updateBookDto);
+  }
+
+  @GrpcMethod('BookService', 'Remove')
+  remove(data: FindBookByIdDto) {
+    return this.bookService.remove(data.id);
   }
 }

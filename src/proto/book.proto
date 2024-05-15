@@ -6,8 +6,9 @@ package book;
 service BookService {
   rpc Create (CreateBookDto) returns (Book) {}
   rpc FindOneById (FindBookByIdDto) returns (Book) {}
-  rpc FindAll (FindBookDto) returns (Book) {}
-
+  rpc Update (UpdateBookDto) returns (Book){}
+  rpc Remove (FindBookByIdDto) returns (Book){}
+  rpc FindAll (FindBookDto) returns (BookListResponse){}
 }
 
 message FindBookByIdDto {
@@ -36,6 +37,14 @@ message UpdateBookDto{
   optional string publishBy = 3;
   optional int32 publishYear = 4;
   optional string author = 5;
+}
+
+message BookListResponse {
+  repeated Book bookList = 1;
+}
+
+message BookResponse {
+  Book book = 1;
 }
 
 message Book {
