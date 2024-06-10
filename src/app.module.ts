@@ -5,6 +5,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { BooksModule } from './books/books.module';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 
 @Module({
   imports: [
@@ -31,6 +32,8 @@ import { BooksModule } from './books/books.module';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         autoSchemaFile: configService.get<string>('GRAPHQL_SCHEMA_FILE'),
+        playground: false,
+        plugins: [ApolloServerPluginLandingPageLocalDefault()],
         formatError(error) {
           const originalError = error.extensions?.originalError;
           if (originalError)
